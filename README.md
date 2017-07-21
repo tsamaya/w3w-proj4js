@@ -44,7 +44,7 @@ This sample projects the coordinates into [EPSG:2154](http://spatialreference.or
 
   ```
 
-1. define the target coordinate system.
+2. define the target coordinate system.
 
   what3words uses the standard WGS84 (EPSG:4326), it is predefined on proj4.
 
@@ -54,7 +54,7 @@ This sample projects the coordinates into [EPSG:2154](http://spatialreference.or
   proj4.defs['EPSG:2154'] = RGF93;
   ```
 
-1. geocode the address
+3. geocode the address
 
   ```javascript
   const p = what3words.forward({
@@ -62,7 +62,7 @@ This sample projects the coordinates into [EPSG:2154](http://spatialreference.or
   });
   ```
 
-1. treat the response or error
+4. treat the response or error
 
   this what3words node [client](https://www.npmjs.com/package/what3words-api-nodejs-client) returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
   ```javascript
@@ -73,31 +73,35 @@ This sample projects the coordinates into [EPSG:2154](http://spatialreference.or
   });
   ```
 
-    - log error
+5. `catch` block handles error
 
-      just log it here
-      ```javascript
-      console.error(error);
-      ```
+just log it here
+  ```javascript
+  .catch((error) => {
+    console.error(error);
+  });
+  ```
 
-    - process the response
+6. the `then` block processes the response
+  
+get coordinates from what3words API response
+  ```javascript
+  const data = JSON.parse(response);
+  const lat = data.geometry.lat;
+  const lng = data.geometry.lng;
+  console.log('lat:', lat, 'lng:', lng);
+  ```
 
-      get coordinates from what3words API response
-      ```javascript
-      const data = JSON.parse(response);
-      const lat = data.geometry.lat;
-      const lng = data.geometry.lng;
-      console.log('lat:', lat, 'lng:', lng);
-      ```
+7. project the coordinates into the target system (here RFG93)
 
-    - project the coordinates into the target system (here RFG93)
+  ```javascript
+  const coords = proj4(proj4.defs['EPSG:4326'], proj4.defs['EPSG:2154'], [lng, lat]);
+  let x = coords[0];
+  let y = coords[1];
+  console.log('RGF3 x:', x, 'y:', y);
+  ```
 
-      ```javascript
-      const coords = proj4(proj4.defs['EPSG:4326'], proj4.defs['EPSG:2154'], [lng, lat]);
-      let x = coords[0];
-      let y = coords[1];
-      console.log('RGF3 x:', x, 'y:', y);
-      ```
+Visit [spatialreference.org](http://spatialreference.org/) to find your projection and adapt this code for your needs
 
 ## license
 
